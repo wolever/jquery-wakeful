@@ -54,7 +54,7 @@
       if (argsStr.length == 0)
         return;
 
-      var getStart = args.url.indexOf("?");
+      var getStart = settings.url.indexOf("?");
       if (getStart < 0) {
         argsStr = "?" + argsStr;
       } else if (getStart < (settings.url.length - 1)) {

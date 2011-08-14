@@ -31,10 +31,10 @@
 
     $(document).ready(function() {
       $.each([
-        ["get(args, kwargs)", [["arg"], {kw: "kwval"}], {0: "arg", kw: "kwval"}],
-        ["get(args)", [["arg"]], {0: "arg"}],
-        ["get(kwargs)", [{kw: "kwval"}], {kw: "kwval"}],
-        ["get()", [], {}]
+        ["live get(args, kwargs)", [["arg"], {kw: "kwval"}], {0: "arg", kw: "kwval"}],
+        ["live get(args)", [["arg"]], {0: "arg"}],
+        ["live get(kwargs)", [{kw: "kwval"}], {kw: "kwval"}],
+        ["live get()", [], {}]
       ], function() {
         var args = this[1];
         var expected = this[2];
@@ -48,6 +48,47 @@
           api.get.apply(api, args);
         });
       });
+
+      $.each([
+        ["getArgs with nothing", "/foo", "/foo?a=b"],
+        ["getArgs with just ?", "/foo?", "/foo?a=b"],
+        ["getArgs with existing args", "/foo?x=y", "/foo?x=y&a=b"],
+      ], function() {
+        var url = this[1];
+        var expected = this[2];
+        test(this[0], function() {
+          var settings = $.extend(api.defaultCallSettings(), {
+            url: url,
+            getArgs: { a: "b" }
+          });
+          api.callAppendGetArgs(settings);
+          equal(settings.url, expected);
+        });
+      });
+
+      $.each([
+        ["expandUrlVariables with args", "/{1}", "/one", {args: ["zero", "two"]}],
+        ["expandUrlVariables with kwargs", "/{foo}", "/foo", {kwargs: {bar: "bar"}}],
+        ["expandUrlVariables with invalid", "/{invalid}", "/{invalid}", {}],
+      ], function() {
+        var url = this[1];
+        var expectedUrl = this[2];
+        var _expectedArgs = this[3];
+        test(this[0], function() {
+          var origSettings = {
+            url: url,
+            args: ["zero", "one", "two"],
+            kwargs: { foo: "foo", bar: "bar" }
+          };
+          var expectedArgs = $.extend({}, origSettings, _expectedArgs);
+          var settings = $.extend(api.defaultCallSettings(), origSettings);
+          api.callExpandUrlVariables(settings);
+          equal(settings.url, expectedUrl);
+          deepEqual(settings.args, expectedArgs.args);
+          deepEqual(settings.kwargs, expectedArgs.kwargs);
+        });
+      });
+
     });
   </script>
 
