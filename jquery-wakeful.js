@@ -4,7 +4,7 @@
     return function() {
       return fn.apply(this, args.concat(Array.prototype.slice.call(arguments)));
     };
-  };
+  }
 
   function log() {
     if (typeof console != "undefined")
@@ -36,7 +36,7 @@
         },
         complete: function(status) {}
       };
-    }
+    };
 
     self.callFixType = function(settings) {
       var type = settings.type.toUpperCase();
@@ -67,7 +67,7 @@
     };
 
     self.callExpandUrlVariables = function(settings) {
-      var newUrl = settings.url.replace(/{(.*?)}/g, function(match, key) {
+      var newUrl = settings.url.replace(/\{(.*?)\}/g, function(match, key) {
         var source;
         if (isNaN(parseInt(key))) {
           source = settings.kwargs;
@@ -122,8 +122,10 @@
     };
 
     self.callCallback_success = function(settings, data, textStatus, jqXHR) {
+      var result;
+
       try {
-        var result = self.serializer.parse(data);
+        result = self.serializer.parse(data);
       } catch (e) {
         settings._original_error({
           type: "parse",
@@ -199,7 +201,7 @@
       self.callAppendGetArgs(settings);
       self.callPrefixUrlWithBase(settings);
       return settings;
-    }
+    };
 
     self.call = function(settings) {
       settings = $.extend({}, self.defaultCallSettings(), settings);
