@@ -98,7 +98,7 @@
           continue;
         var value = kwargs[key];
         var type = typeof value;
-        if (!(type == "string" || type == "number")) {
+        if (type != "string") {
           kwargsNeedSerializing = true;
           break;
         }
@@ -135,15 +135,25 @@
       if (!result) {
         settings._original_error({
           type: "invalid-data",
-          msg: "null result"
+          msg: "null result",
+          result: result
+        });
+        return;
+      }
+      
+      if (result.error) {
+        settings._original_error({
+          type: "app",
+          msg: result.msg,
+          result: result
         });
         return;
       }
 
       if (!result.ok) {
         settings._original_error({
-          type: "app",
-          msg: result.msg,
+          type: "invalid-data",
+          msg: "neither result.error or result.ok are set",
           result: result
         });
         return;
@@ -188,6 +198,7 @@
       self.callExpandUrlVariables(settings);
       self.callAppendGetArgs(settings);
       self.callPrefixUrlWithBase(settings);
+      return settings;
     }
 
     self.call = function(settings) {
