@@ -16,7 +16,8 @@
 
     function log() {
       var args = Array.prototype.slice.call(arguments);
-      args.splice(0, 0, QUnit.config.current.testName + ":");
+      var cur = QUnit.config.current? QUnit.config.current.testName : "<none>";
+      args.splice(0, 0, cur + ":");
       console.log.apply(console, args);
     }
 
@@ -29,11 +30,23 @@
     }
 
     $(document).ready(function() {
-      asyncTest("get(args, kwargs)", function() {
-        api.get("foo", ["hello"], {what: "world"}, function(result) {
+      $.each([
+        ["get(args, kwargs)", [["arg"], {kw: "kwval"}], {0: "arg", kw: "kwval"}],
+        ["get(args)", [["arg"]], {0: "arg"}],
+        ["get(kwargs)", [{kw: "kwval"}], {kw: "kwval"}],
+        ["get()", [], {}]
+      ], function() {
+        var args = this[1];
+        var expected = this[2];
+        args.splice(0, 0, "foo");
+        args.push(function(result) {
           start();
-          deepEqual(result, { 0: "hello", what: "world" });
-        }, asyncFail());
+          deepEqual(result, expected);
+        });
+        args.push(asyncFail());
+        asyncTest(this[0], function() {
+          api.get.apply(api, args);
+        });
       });
     });
   </script>

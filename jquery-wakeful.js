@@ -23,18 +23,20 @@
 
     self.log = log;
 
-    self.defaultCallSettings = {
-      url: "",
-      args: [],
-      kwargs: {},
-      getArgs: {},
-      data: {},
-      success: function(result) {},
-      error: function(error) {
-        self.log("warning: error without errback", error);
-      },
-      complete: function(status) {}
-    };
+    self.defaultCallSettings = function() {
+      return {
+        url: "",
+        args: [],
+        kwargs: {},
+        getArgs: {},
+        data: {},
+        success: function(result) {},
+        error: function(error) {
+          self.log("warning: error without errback", error);
+        },
+        complete: function(status) {}
+      };
+    }
 
     self.callFixType = function(settings) {
       var type = settings.type.toUpperCase();
@@ -189,7 +191,7 @@
     }
 
     self.call = function(settings) {
-      settings = $.extend({}, self.defaultCallSettings, settings);
+      settings = $.extend({}, self.defaultCallSettings(), settings);
       self.callSetup(settings);
       return $.ajax(settings);
     };
