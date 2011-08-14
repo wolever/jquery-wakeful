@@ -11,7 +11,7 @@
 
   <script>
     var api = $.Wakeful({
-      baseUrl: "http://localhost:4513/echo/"
+      baseUrl: "http://localhost:4513/api/"
     });
 
     function log() {
@@ -38,7 +38,7 @@
       ], function() {
         var args = this[1];
         var expected = this[2];
-        args.splice(0, 0, "foo");
+        args.splice(0, 0, "echo");
         args.push(function(result) {
           start();
           deepEqual(result, expected);
