@@ -96,9 +96,8 @@ The Server
 
 Because of the wide variety of server frameworks and requirements it is not
 feasable (or sensible?) to include drop-in server code. However a sample
-server, implemented in Python, is provided in ``test/server.py``, and the unit
-tests (included in ``tests/tests.html``) can be used to test your
-implementation.
+server, implemented in Python, is provided in ``test/server.py``, and the tests
+(included in ``tests/tests.html``) can be used to test your implementation.
 
 
 The Protocol
