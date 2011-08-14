@@ -1,4 +1,4 @@
-jquery-wakeful: A jQuery based REST API client and protocol
+jquery-wakeful: A REST RPC protocol and jQuery based client
 ===========================================================
 
 The Client
