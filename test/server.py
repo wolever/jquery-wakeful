@@ -11,24 +11,33 @@ class AppError(Exception):
 
 
 class TestAPI(object):
+    def __init__(self, request_method):
+        self.request_method = request_method
+
     def echo(self, *args, **kwargs):
         result = dict(kwargs)
         result.update([ (idx, var) for (idx, var)
                         in enumerate(args) ])
+        result["method"] = self.request_method
         return result
 
 
-def handle_rpc(request, func_name, api):
-    api.get_kwargs = dict(request.args.items())
-    api.post_kwargs = dict(request.form.items())
+def handle_rpc(request, func_name):
+    get_kwargs = dict(request.args.items())
+    post_kwargs = dict(request.form.items())
 
-    kwargs = dict(api.get_kwargs)
-    kwargs.update(api.post_kwargs)
+    kwargs = dict(get_kwargs)
+    kwargs.update(post_kwargs)
 
-    api.json_kwargs = json.loads(kwargs.pop("__kwargs", "{}"))
-    kwargs.update(api.json_kwargs)
+    json_kwargs = json.loads(kwargs.pop("__kwargs", "{}"))
+    kwargs.update(json_kwargs)
+    kwargs = dict((str(key), val) for (key, val)
+                  in kwargs.items())
 
     args = json.loads(kwargs.pop("__args", "[]"))
+
+    method = kwargs.pop("__actual_type", request.method)
+    api = TestAPI(method)
 
     try:
         func = getattr(api, func_name)
@@ -53,8 +62,7 @@ def application(request):
 
     match = re.match("^/api/(.+)", request.path)
     if match:
-        api = TestAPI()
-        return handle_rpc(request, match.group(1), api)
+        return handle_rpc(request, match.group(1))
     return Response("unknown: " + request.path, status=404)
 
 if __name__ == '__main__':

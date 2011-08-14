@@ -215,6 +215,9 @@
     };
 
     self.get = self._callFactory("GET");
+    self.post = self._callFactory("POST");
+    self.put = self._callFactory("PUT");
+    self.delete = self._callFactory("DELETE");
     return self;
   };
 

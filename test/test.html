@@ -10,10 +10,6 @@
   <script src="../jquery-wakeful.js"></script>
 
   <script>
-    var api = $.Wakeful({
-      baseUrl: "http://localhost:4513/api/"
-    });
-
     function log() {
       var args = Array.prototype.slice.call(arguments);
       var cur = QUnit.config.current? QUnit.config.current.testName : "<none>";
@@ -28,24 +24,41 @@
         ok(false, reason || "asyncFail (see console.log)");
       }
     }
+  </script>
 
+  <script>
     $(document).ready(function() {
+      module("API");
+
       $.each([
-        ["live get(args, kwargs)", [["arg"], {kw: "kwval"}], {0: "arg", kw: "kwval"}],
-        ["live get(args)", [["arg"]], {0: "arg"}],
-        ["live get(kwargs)", [{kw: "kwval"}], {kw: "kwval"}],
-        ["live get()", [], {}]
+        ["_callFactory(args, kwargs)", ["arg"], {kw: "kwval"}],
+        ["_callFactory(args)", ["arg"], undefined],
+        ["_callFactory(kwargs)", undefined, {kw: "kwval"}],
+        ["_callFactory()", undefined, undefined],
       ], function() {
-        var args = this[1];
-        var expected = this[2];
-        args.splice(0, 0, "echo");
-        args.push(function(result) {
-          start();
-          deepEqual(result, expected);
-        });
-        args.push(asyncFail());
-        asyncTest(this[0], function() {
-          api.get.apply(api, args);
+        var expected = this.slice(1);
+        var args = [];
+        expected[0] && args.push(expected[0]);
+        expected[1] && args.push(expected[1]);
+        args.splice(0, 0, "func");
+        args.push("success", "error");
+
+        test(this[0], function() {
+          var wake = $.Wakeful();
+          var func = wake._callFactory("FOO");
+          var callSettings = null;
+          wake.call = function(settings) {
+            callSettings = settings;
+          };
+          func.apply(wake, args);
+          deepEqual(callSettings, {
+            type: "FOO",
+            url: "func",
+            args: expected[0],
+            kwargs: expected[1],
+            success: "success",
+            error: "error",
+          });
         });
       });
 
@@ -54,6 +67,7 @@
         ["getArgs with just ?", "/foo?", "/foo?a=b"],
         ["getArgs with existing args", "/foo?x=y", "/foo?x=y&a=b"],
       ], function() {
+        var api = $.Wakeful();
         var url = this[1];
         var expected = this[2];
         test(this[0], function() {
@@ -71,6 +85,7 @@
         ["expandUrlVariables with kwargs", "/{foo}", "/foo", {kwargs: {bar: "bar"}}],
         ["expandUrlVariables with invalid", "/{invalid}", "/{invalid}", {}],
       ], function() {
+        var api = $.Wakeful();
         var url = this[1];
         var expectedUrl = this[2];
         var _expectedArgs = this[3];
@@ -88,7 +103,44 @@
           deepEqual(settings.kwargs, expectedArgs.kwargs);
         });
       });
+    });
+  </script>
 
+  <script>
+    $(document).ready(function() {
+      var api = $.Wakeful({
+        baseUrl: "http://localhost:4513/api/"
+      });
+
+      module("Server");
+      var methods = ["get", "post", "put", "delete"];
+      var calls = [
+        ["(args, kwargs)", [["arg"], {kw: "kw"}], { 0: "arg", kw: "kw" }],
+        ["(args)", [["arg"]], { 0: "arg" }],
+        ["(kwargs)", [{kw: "kw"}], { kw: "kw" }],
+        ["()", [], {}],
+        ["(complex, complex)",
+          [[0, 1, {complex: "arg"}], {foo: "foo", complex: ["kwarg"]}],
+          { 0: 0, 1: 1, 2: {complex: "arg"}, foo: "foo", complex: ["kwarg"]}
+        ],
+      ];
+
+      $.each(methods, function() {
+        var method = this;
+        $.each(calls, function() {
+          var args = this[1].slice();
+          args.splice(0, 0, "echo");
+          var expected = $.extend({ method: method.toUpperCase() }, this[2]);
+          asyncTest(method + this[0], function() {
+            args.push(function(result) {
+              start();
+              deepEqual(result, expected);
+            });
+            args.push(asyncFail("unexpected error"));
+            api[method].apply(api, args);
+          });
+        });
+      });
     });
   </script>
 
