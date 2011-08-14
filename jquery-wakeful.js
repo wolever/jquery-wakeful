@@ -23,6 +23,23 @@
 
     self.log = log;
 
+    self.attachGetArgs = function(url, args) {
+      var argsStr = $.param(args);
+      if (argsStr.length == 0)
+        return url;
+
+      var getStart = url.indexOf("?");
+      if (getStart < 0) {
+        argsStr = "?" + argsStr;
+      } else if (getStart < (url.length - 1)) {
+        // Note: -1 because, if the URL matches /\?$/, we just append the
+        // argsStr.
+        argsStr = "&" + argsStr;
+      }
+
+      return url + argsStr;
+    };
+
     self.defaultCallSettings = function() {
       return {
         type: "GET",
@@ -54,20 +71,7 @@
     };
 
     self.callAppendGetArgs = function(settings) {
-      var argsStr = $.param(settings.getArgs);
-      if (argsStr.length == 0)
-        return;
-
-      var getStart = settings.url.indexOf("?");
-      if (getStart < 0) {
-        argsStr = "?" + argsStr;
-      } else if (getStart < (settings.url.length - 1)) {
-        // Note: -1 because, if the URL matches /\?$/, we just append the
-        // argsStr.
-        argsStr = "&" + argsStr;
-      }
-
-      settings.url += argsStr;
+      settings.url = self.attachGetArgs(settings.url, settings.getArgs);
     };
 
     self.callExpandUrlVariables = function(settings) {
@@ -204,6 +208,7 @@
       self.callExpandUrlVariables(settings);
       self.callAppendGetArgs(settings);
       self.callPrefixUrlWithBase(settings);
+
       return settings;
     };
 

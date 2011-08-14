@@ -34,10 +34,11 @@ an appropriate URL. For example::
     .     args: ["wolever"],
     .     kwargs: { size: "50" }
     . }));
-    > call.url
+    > var url = api.attachGetArgs(call.url, call.data);
+    > url
     '…/people/wolever/avatar?size=50'
     > var img = new Image();
-    > img.src = call.url;
+    > img.src = url;
 
 
 Callbacks
