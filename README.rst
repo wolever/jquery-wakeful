@@ -1,6 +1,13 @@
 jquery-wakeful: A REST RPC protocol and jQuery based client
 ===========================================================
 
+Current Status
+--------------
+
+Wakeful is currently being used in-house. It it still fairly new, though, so
+expect some rough edges.
+
+
 The Client
 ----------
 
