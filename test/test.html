@@ -103,6 +103,16 @@
           deepEqual(settings.kwargs, expectedArgs.kwargs);
         });
       });
+
+      test("expandUrlVariables escaping", function() {
+        var api = $.Wakeful();
+        var settings = $.extend(api.defaultCallSettings(), {
+          url: "/{0}",
+          args: ["+/%"],
+        });
+        api.callExpandUrlVariables(settings);
+        equal(settings.url, "/%2B%2F%25");
+      });
     });
   </script>
 
