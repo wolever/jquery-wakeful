@@ -31,6 +31,10 @@ def handle_rpc(request, func_name):
 
     json_kwargs = json.loads(kwargs.pop("__kwargs", "{}"))
     kwargs.update(json_kwargs)
+
+    # Note: JSON loads all strings as unicode, but Python < 2.7 gets upset when
+    # unicode strings are used as keywords... So we need to convert the kwargs
+    # keys to strings.
     kwargs = dict((str(key), val) for (key, val)
                   in kwargs.items())
 

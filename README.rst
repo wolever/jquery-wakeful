@@ -91,6 +91,15 @@ The **complete** callback will be called with an object ``{ jqXHR: …,
 textStatus: … }``, which contains the values provided by jQuery's ``.ajax(…)``
 function.
 
+The Server
+----------
+
+Because of the wide variety of server frameworks and requirements it is not
+feasable (or sensible?) to include drop-in server code. However a sample
+server, implemented in Python, is provided in ``test/server.py``, and the unit
+tests (included in ``tests/tests.html``) can be used to test your
+implementation.
+
 
 The Protocol
 ------------
