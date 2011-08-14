@@ -25,6 +25,7 @@
 
     self.defaultCallSettings = function() {
       return {
+        type: "GET",
         url: "",
         args: [],
         kwargs: {},
