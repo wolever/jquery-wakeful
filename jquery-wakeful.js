@@ -34,7 +34,10 @@
         error: function(error) {
           self.log("warning: error without errback", error);
         },
-        complete: function(status) {}
+        complete: function(status) {},
+        // Don't let jQuery try to load the response for us
+        converters: {},
+        dataType: "text"
       };
     };
 
