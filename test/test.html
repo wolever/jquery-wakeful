@@ -1,0 +1,51 @@
+<html> 
+<head> 
+  <title>jquery-wakeful test</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+  <script src="jquery-1.6.2.min.js"></script>
+
+  <script src="qunit-75dae0b/qunit.js"></script>
+  <link rel="stylesheet" href="qunit-75dae0b/qunit.css" type="text/css" />
+
+  <script src="../jquery-wakeful.js"></script>
+
+  <script>
+    var api = $.Wakeful({
+      baseUrl: "http://localhost:4513/echo/"
+    });
+
+    function log() {
+      var args = Array.prototype.slice.call(arguments);
+      args.splice(0, 0, QUnit.config.current.testName + ":");
+      console.log.apply(console, args);
+    }
+
+    function asyncFail(reason) {
+      return function() {
+        start();
+        log("asyncFail arguments:", arguments);
+        ok(false, reason || "asyncFail (see console.log)");
+      }
+    }
+
+    $(document).ready(function() {
+      asyncTest("get(args, kwargs)", function() {
+        api.get("foo", ["hello"], {what: "world"}, function(result) {
+          start();
+          deepEqual(result, { 0: "hello", what: "world" });
+        }, asyncFail());
+      });
+    });
+  </script>
+
+</head>
+
+<body>
+  <h1 id="qunit-header">jquery-wakeful tests</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+</body>
+</html>
+
