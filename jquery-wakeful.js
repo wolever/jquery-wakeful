@@ -66,7 +66,7 @@
       if (type == "GET" || type == "POST")
         return;
 
-      settings.getArgs.__actual_type = type;
+      settings.getArgs.__actual_method = type;
       settings.type = "POST";
     };
 

@@ -120,9 +120,9 @@ The Wakeful protocol is designed to:
 
 Wakeful calls and responses must follow these rules:
 
-1. The HTTP method may be specified using the GET argument ``__actual_type``.
+1. The HTTP method may be specified using the GET argument ``__actual_method``.
    For example, if a JavaScript client wants to send a ``PUT`` request, it may
-   issue the request ``POST /example?__actual_type=PUT`` (this is necessary
+   issue the request ``POST /example?__actual_method=PUT`` (this is necessary
    because browser-based JavaScript cannot reliably use any methods besides
    ``GET`` and ``POST``). See ``Wakeful.callFixType()`` a client
    implementation.
