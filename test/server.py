@@ -40,7 +40,7 @@ def handle_rpc(request, func_name):
 
     args = json.loads(kwargs.pop("__args", "[]"))
 
-    method = kwargs.pop("__actual_type", request.method)
+    method = kwargs.pop("__actual_method", request.method)
     api = TestAPI(method)
 
     try:
