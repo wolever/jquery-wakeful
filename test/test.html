@@ -151,6 +151,23 @@
           });
         });
       });
+
+
+      asyncTest("call with everything", function() {
+        api.get("echo?foo_get=1&bar_get={0}&baz_get={baz}",
+                ["bar", "arg1"], {baz: "baz", kwarg: "kwval"},
+          function(result) {
+            start();
+            deepEqual(result, {
+              "0": "arg1",
+              "bar_get": "bar",
+              "baz_get": "baz",
+              "kwarg": "kwval",
+              "foo_get": "1",
+              "method": "GET"
+            });
+          }, asyncFail("unexpected error"));
+      });
     });
   </script>
 

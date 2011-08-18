@@ -199,15 +199,14 @@
     };
 
     self.callSetup = function(settings) {
-      // Setup the call so it will be a valid jQuery call
       self.callFixType(settings);
-      self.callSetDataFromArgs(settings);
-      self.callSetupCallbacks(settings);
 
-      // Munge the URL a bit
       self.callExpandUrlVariables(settings);
       self.callAppendGetArgs(settings);
       self.callPrefixUrlWithBase(settings);
+
+      self.callSetDataFromArgs(settings);
+      self.callSetupCallbacks(settings);
 
       return settings;
     };
