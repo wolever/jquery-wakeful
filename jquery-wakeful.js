@@ -75,6 +75,7 @@
     };
 
     self.callExpandUrlVariables = function(settings) {
+      var argsToRemove = [];
       var newUrl = settings.url.replace(/\{(.*?)\}/g, function(match, key) {
         var source;
         if (isNaN(parseInt(key))) {
@@ -90,12 +91,26 @@
         if (source === settings.kwargs) {
           delete source[key];
         } else {
-          source.splice(key, 1);
+          argsToRemove.push(+key);
         }
 
         return encodeURIComponent(result);
       });
+
       settings.url = newUrl;
+
+      if (argsToRemove.length) {
+        var removed = {};
+        argsToRemove.sort();
+        for (var i = (argsToRemove.length - 1); i >= 0; i -= 1) {
+          var toRemove = argsToRemove[i];
+          if (removed[toRemove])
+            continue;
+          removed[toRemove] = true;
+          settings.args.splice(toRemove, 1);
+        }
+      }
+
     };
 
     self.callSetDataFromArgs = function(settings) {
