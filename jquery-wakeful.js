@@ -76,6 +76,8 @@
 
     self.callExpandUrlVariables = function(settings) {
       var argsToRemove = [];
+      var kwargsToRemove = [];
+
       var newUrl = settings.url.replace(/\{(.*?)\}/g, function(match, key) {
         var source;
         if (isNaN(parseInt(key))) {
@@ -89,7 +91,7 @@
           return match;
         
         if (source === settings.kwargs) {
-          delete source[key];
+          kwargsToRemove.push(key);
         } else {
           argsToRemove.push(+key);
         }
@@ -99,7 +101,7 @@
 
       settings.url = newUrl;
 
-      if (argsToRemove.length) {
+      if (argsToRemove.length > 0) {
         var removed = {};
         argsToRemove.sort();
         for (var i = (argsToRemove.length - 1); i >= 0; i -= 1) {
@@ -109,6 +111,11 @@
           removed[toRemove] = true;
           settings.args.splice(toRemove, 1);
         }
+      }
+
+      if (kwargsToRemove.length > 0) {
+        for (var i = 0; i < kwargsToRemove.length; i += 1)
+          delete settings.kwargs[kwargsToRemove[i]];
       }
 
     };

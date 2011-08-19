@@ -83,7 +83,7 @@
       $.each([
         ["expandUrlVariables with arg", "/{1}", "/one", {args: ["zero", "two"]}],
         ["expandUrlVariables with args", "/{0}/{1}/{1}", "/zero/one/one", {args: ["two"]}],
-        ["expandUrlVariables with kwargs", "/{foo}", "/foo", {kwargs: {bar: "bar"}}],
+        ["expandUrlVariables with kwargs", "/{foo}/{foo}", "/foo/foo", {kwargs: {bar: "bar"}}],
         ["expandUrlVariables with invalid", "/{invalid}", "/{invalid}", {}],
       ], function() {
         var api = $.Wakeful();
