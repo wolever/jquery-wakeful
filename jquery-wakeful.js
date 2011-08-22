@@ -260,7 +260,8 @@
     self.get = self._callFactory("GET");
     self.post = self._callFactory("POST");
     self.put = self._callFactory("PUT");
-    self.delete = self._callFactory("DELETE");
+    self.del = self._callFactory("DELETE");
+    // Note: 'del' is used because 'delete' is a reserved word.
     return self;
   };
 

@@ -148,6 +148,8 @@
               deepEqual(result, expected);
             });
             args.push(asyncFail("unexpected error"));
+            if (method == "delete")
+              method = "del";
             api[method].apply(api, args);
           });
         });
