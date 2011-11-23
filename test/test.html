@@ -115,6 +115,26 @@
         equal(settings.url, "/%2B%2F%25");
       });
 
+      $.each([
+        [".url no args", ["/foo"],
+          "/foo"],
+        [".url with args", ["/foo", ["stuff"]],
+          "/foo?__args=%5B%22stuff%22%5D"],
+        [".url with kwargs", ["/foo", {"foo": "bar"}],
+          "/foo?foo=bar"],
+        [".url with complex kwargs", ["/foo", {"foo": {}}],
+          "/foo?__kwargs=%7B%22foo%22%3A%7B%7D%7D",],
+        [".url with complex args and kwargs", ["/foo", [[]], {"foo": {}}],
+          "/foo?__kwargs=%7B%22foo%22%3A%7B%7D%7D&__args=%5B%5B%5D%5D"]
+      ], function() {
+        var api = $.Wakeful();
+        var args = this[1];
+        var expected = this[2];
+        test(this[0], function() {
+          var actual = api.url.apply(api, args);
+          equal(actual, expected);
+        });
+      });
     });
   </script>
 

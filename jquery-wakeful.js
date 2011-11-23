@@ -233,6 +233,18 @@
       return settings;
     };
 
+    self.url = function(url) {
+      var settingsArgs = Array.prototype.slice.call(arguments, [1]);
+      var settings = self.buildSettings("GET", url, settingsArgs);
+      settings = $.extend({}, self.defaultCallSettings(), settings);
+      self.callExpandUrlVariables(settings);
+      self.callSetDataFromArgs(settings);
+      $.extend(settings.getArgs, settings.data);
+      self.callAppendGetArgs(settings);
+      self.callPrefixUrlWithBase(settings);
+      return settings.url;
+    };
+
     self.call = function(settings) {
       settings = $.extend({}, self.defaultCallSettings(), settings);
       self.callSetup(settings);
