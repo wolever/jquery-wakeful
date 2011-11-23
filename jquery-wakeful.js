@@ -239,21 +239,28 @@
       return $.ajax(settings);
     };
 
+    self.buildSettings = function(type, url) {
+      var args = Array.prototype.slice.call(arguments);
+      args.splice(0, 2);
+      if (!$.isArray(args[0]))
+        args.splice(0, 0, undefined);
+      if (!$.isPlainObject(args[1]))
+        args.splice(1, 0, undefined);
+      return {
+        type: type,
+        url: url,
+        args: args[0],
+        kwargs: args[1],
+        success: args[2],
+        error: args[3]
+      };
+    };
+
     self._callFactory = function(type) {
       return function(url) {
-        var args = Array.prototype.slice.call(arguments);
-        if (!$.isArray(args[1]))
-          args.splice(1, 0, undefined);
-        if (!$.isPlainObject(args[2]))
-          args.splice(2, 0, undefined);
-        return self.call({
-          type: type,
-          url: url,
-          args: args[1],
-          kwargs: args[2],
-          success: args[3],
-          error: args[4]
-        });
+        var buildSettingsArgs = [type];
+        buildSettingsArgs.push.apply(buildSettingsArgs, arguments);
+        return self.call(self.buildSettings.apply(self, buildSettingsArgs));
       };
     };
 
