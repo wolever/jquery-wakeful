@@ -239,9 +239,7 @@
       return $.ajax(settings);
     };
 
-    self.buildSettings = function(type, url) {
-      var args = Array.prototype.slice.call(arguments);
-      args.splice(0, 2);
+    self.buildSettings = function(type, url, args) {
       if (!$.isArray(args[0]))
         args.splice(0, 0, undefined);
       if (!$.isPlainObject(args[1]))
@@ -258,9 +256,8 @@
 
     self._callFactory = function(type) {
       return function(url) {
-        var buildSettingsArgs = [type];
-        buildSettingsArgs.push.apply(buildSettingsArgs, arguments);
-        return self.call(self.buildSettings.apply(self, buildSettingsArgs));
+        var settingsArgs = Array.prototype.slice.call(arguments, [1]);
+        return self.call(self.buildSettings(type, url, settingsArgs));
       };
     };
 
