@@ -154,23 +154,26 @@
     /**
      * Parses a response string.
      * If an error is encountered, an error object is returned:
-     *     { error: {
-     *         type: "...",
-     *         msg: "...",
-     *         resultStr: "...",
-     *         result: (<parsed response>|undefined),
-     *         ...
-     *     }}
+     *     {
+     *          error: true,
+     *          data: {
+     *               type: "...",
+     *               msg: "...",
+     *               resultStr: "...",
+     *               result: (<parsed result>|undefined),
+     *               ...
+     *          }
+     *     }
      * (see code for possible "types")
      *
      * Otherwise an ok object is returned:
-     *     { ok: <parsed response>.data }
+     *     { ok: true, data: <parsed response>.data }
      */
     self.parseResult = function(resultStr) {
       var result;
 
       var error = function(type, msg, extra) {
-        return { error: $.extend({
+        return { error: true, data: $.extend({
           type: type,
           msg: msg,
           resultStr: resultStr,
@@ -195,15 +198,15 @@
       if (!result.ok)
         return error("invalid-data", "neither result.error or result.ok set");
 
-      return { ok: result.data };
+      return { ok: true, data: result.data };
     };
 
     self.callCallback_success = function(settings, data, textStatus, jqXHR) {
       var result = self.parseResult(data);
       if (result.error) {
-        settings._original_error(result.error);
+        settings._original_error(result.data);
       } else {
-        settings._original_success(result.ok);
+        settings._original_success(result.data);
       }
     };
 
