@@ -151,47 +151,60 @@
         settings.url = self.baseUrl + settings.url;
     };
 
-    self.callCallback_success = function(settings, data, textStatus, jqXHR) {
+    /**
+     * Parses a response string.
+     * If an error is encountered, an error object is returned:
+     *     { error: {
+     *         type: "...",
+     *         msg: "...",
+     *         resultStr: "...",
+     *         result: (<parsed response>|undefined),
+     *         ...
+     *     }}
+     * (see code for possible "types")
+     *
+     * Otherwise an ok object is returned:
+     *     { ok: <parsed response>.data }
+     */
+    self.parseResult = function(resultStr) {
       var result;
 
+      var error = function(type, msg, extra) {
+        return { error: $.extend({
+          type: type,
+          msg: msg,
+          resultStr: resultStr,
+          result: result
+        }, extra || {})};
+      };
+
       try {
-        result = self.serializer.parse(data);
+        result = self.serializer.parse(resultStr);
       } catch (e) {
-        settings._original_error({
-          type: "parse",
+        return error("parse", "error while parsing response: " + e, {
           err: e
         });
-        return;
       }
 
-      if (!result) {
-        settings._original_error({
-          type: "invalid-data",
-          msg: "null result",
-          result: result
-        });
-        return;
-      }
+      if (!result)
+        return error("invalid-data", "null result");
       
+      if (result.error)
+        return error("app", result.msg);
+
+      if (!result.ok)
+        return error("invalid-data", "neither result.error or result.ok set");
+
+      return { ok: result.data };
+    };
+
+    self.callCallback_success = function(settings, data, textStatus, jqXHR) {
+      var result = self.parseResult(data);
       if (result.error) {
-        settings._original_error({
-          type: "app",
-          msg: result.msg,
-          result: result
-        });
-        return;
+        settings._original_error(result.error);
+      } else {
+        settings._original_success(result.ok);
       }
-
-      if (!result.ok) {
-        settings._original_error({
-          type: "invalid-data",
-          msg: "neither result.error or result.ok are set",
-          result: result
-        });
-        return;
-      }
-
-      settings._original_success(result.data);
     };
 
     self.callCallback_error = function(settings, jqXHR, textStatus, errorThrown) {
