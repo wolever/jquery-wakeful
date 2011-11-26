@@ -25,23 +25,18 @@ Some examples of the Wakeful client::
     >>> POST …/people/new
     ... Content-Type: application/x-www-form-urlencoded; charset=UTF-8
     ...
-    ... __kwargs="%7B%22id%22%3A%22wolever%22%2C%22name%22%3A%22David%20Wolever%22%7D"
+    ... handle=wolever&name=David%20Wolever
     <<< {"ok": true, data: {"id": "eb2ab64120344db8bf56614f5c05fc33"}}
 
-Note that, by default, the Wakeful client uses the browser's native JSON
-serialization. It is up to the developer to set ``Wakeful().serializer`` if the
-browser doesn't support JSON or a different serializer is desired.
+**Note**: by default, the Wakeful client uses the browser's native JSON
+serialization. It is up to the developer to set ``Wakeful().serializer`` if
+the browser doesn't support JSON or a different serializer is desired.
 
 The client is designed to be very extensible. For example, if the result of a
 call is an image instead of serialized data, the client can be used to create
 an appropriate URL. For example::
 
-    > var call = api.callSetup($.extend(api.defaultCallSettings(), {
-    .     url: "people/{0}/avatar",
-    .     args: ["wolever"],
-    .     kwargs: { size: "50" }
-    . }));
-    > var url = api.attachGetArgs(call.url, call.data);
+    > var url = api.url("people/{0}/avatar", ["wolever"], { size: "50" })
     > url
     '…/people/wolever/avatar?size=50'
     > var img = new Image();
