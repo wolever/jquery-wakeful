@@ -62,6 +62,10 @@ describes the nature of the error. The possible values for ``type`` are:
         When the serializer raised an exception while trying to parse the
         response. Additional fields:
 
+        ``msg``
+            The value of ``$.Wakeful.PARSE_ERR_MSG`` (default: ``"problem
+            loading result (parse error)"``).
+
         ``err``
             The exception raised by the serializer.
 
@@ -70,7 +74,10 @@ describes the nature of the error. The possible values for ``type`` are:
         ``ok`` or ``error`` are set). Additional fields:
 
         ``msg``
-            A short description of the error
+            The value of ``$.Wakeful.INVALID_DATA_EMPTY_ERR_MSG`` (default:
+            ``"problem loading result (empty)"``) or the value of
+            ``$.Wakeful.INVALID_DATA_NO_RESULT_ERR_MSG`` (default: ``"problem
+            loading result (result is neither ok or error)"``).
 
         ``result``
             The original result.
@@ -79,13 +86,19 @@ describes the nature of the error. The possible values for ``type`` are:
         When the server returned an ``error`` response. Additional fields:
 
         ``msg``
-            The ``msg`` field from the server's response.
+            The ``msg`` field from the server's response, or if it is a
+            false-ish value, ``$.Wakeful.APP_DEFAULT_ERR_MSG`` (default:
+            ``"application returned an undefined error"``).
 
         ``result``
             The original result.
 
     ``"transport"``
         When an error occured during transport. Additional fields are 
+
+        ``msg``
+            The value of ``$.Wakeful.TRANSPORT_ERR_MSG`` (default: ``"problem
+            with request ({textStatus}: {errorThrown})"``).
 
         ``jqXHR``, ``textStatus``, ``errorThrown``
             The values provided by jQuery's ``.ajax(…)`` function.

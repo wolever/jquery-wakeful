@@ -17,6 +17,11 @@
 
   $.Wakeful = function(options) {
     var self = $.extend({
+      PARSE_ERR_MSG: "problem loading result (parse error)",
+      INVALID_DATA_EMPTY_ERR_MSG: "problem loading result (empty)",
+      INVALID_DATA_NO_RESULT_ERR_MSG: "problem loading result (result is neither ok or error)",
+      APP_DEFAULT_ERR_MSG: "application returned an undefined error",
+      TRANSPORT_ERR_MSG: "problem with request ({textStatus}: {errorThrown})",
       baseUrl: undefined,
       serializer: _json
     }, (options || {}));
@@ -184,19 +189,19 @@
       try {
         result = self.serializer.parse(resultStr);
       } catch (e) {
-        return error("parse", "error while parsing response: " + e, {
+        return error("parse", self.PARSE_ERR_MSG, {
           err: e
         });
       }
 
       if (!result)
-        return error("invalid-data", "null result");
+        return error("invalid-data", self.INVALID_DATA_EMPTY_ERR_MSG);
       
       if (result.error)
-        return error("app", result.msg);
+        return error("app", result.msg || self.APP_DEFAULT_ERR_MSG);
 
       if (!result.ok)
-        return error("invalid-data", "neither result.error or result.ok set");
+        return error("invalid-data", self.INVALID_DATA_NO_RESULT_ERR_MSG);
 
       return { ok: true, data: result.data };
     };
@@ -211,12 +216,16 @@
     };
 
     self.callCallback_error = function(settings, jqXHR, textStatus, errorThrown) {
-      settings._original_error({
+      var err = {
         type: "transport",
         jqXHR: jqXHR,
         textStatus: textStatus,
         errorThrown: errorThrown
+      };
+      err.msg = self.TRANSPORT_ERR_MSG.replace(/{([^{}]+}/g, function(_, match) {
+        return err[match];
       });
+      settings._original_error(err);
     };
 
     self.callCallback_complete = function(settings, jqXHR, textStatus) {
