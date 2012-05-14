@@ -201,7 +201,7 @@
         return error("invalid-data", self.INVALID_DATA_EMPTY_ERR_MSG);
       
       if (result.error)
-        return error("app", result.msg || self.APP_DEFAULT_ERR_MSG);
+        return error("app", (result.data || {}).msg || self.APP_DEFAULT_ERR_MSG);
 
       if (!result.ok)
         return error("invalid-data", self.INVALID_DATA_NO_RESULT_ERR_MSG);
