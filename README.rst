@@ -155,8 +155,10 @@ Wakeful calls and responses must follow these rules:
        ``GET /people``.
 
 3. Call results must be a serialized dictionary containing either ``{ ok: true,
-   data: … }`` or ``{ error: true, msg: …, … }`` (where ``…`` may be any
-   value). If ``error`` is ``true``, then the client must return an error which
-   includes the ``msg`` and any additional data. If ``ok`` is ``true``, the
-   client must return ``data`` to the caller.
+   data: … }`` or ``{ error: true, data: … }`` (where ``…`` may be any
+   value; if it contains a non-falseish ``.msg`` property, that property will
+   be used as the ``msg`` attribute of the returned error). If ``error`` is
+   ``true``, then the client will return an error (see `Callbacks`_ for the
+   possible values). If ``ok`` is ``true``, the client must return ``data`` to
+   the caller.
 

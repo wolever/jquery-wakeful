@@ -178,12 +178,15 @@
       var result;
 
       var error = function(type, msg, extra) {
-        return { error: true, data: $.extend({
-          type: type,
-          msg: msg,
-          resultStr: resultStr,
-          result: result
-        }, extra || {})};
+        return {
+          error: true,
+          data: {
+            type: type,
+            msg: msg,
+            resultStr: resultStr,
+            result: (result || {}).data
+          }
+        };
       };
 
       try {
