@@ -225,7 +225,7 @@
         textStatus: textStatus,
         errorThrown: errorThrown
       };
-      err.msg = self.TRANSPORT_ERR_MSG.replace(/{([^{}]+}/g, function(_, match) {
+      err.msg = self.TRANSPORT_ERR_MSG.replace(/{([^{}]+)}/g, function(_, match) {
         return err[match];
       });
       settings._original_error(err);
